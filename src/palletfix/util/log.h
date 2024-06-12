@@ -2,6 +2,7 @@
 
 #include <string>
 #include <format>
+#include <mutex>
 
 /*
     Log types represented in enums, strings and their prefix colours
