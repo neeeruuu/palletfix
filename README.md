@@ -2,7 +2,7 @@
     <b>palletfix</b>
 </h1>
 <p align="center">
-	Allows Bonelab's Mod.IO downloader to mount pre patch 4 mods.
+	Allows Bonelab's in-game mod.io downloader to mount pre patch 4 mods.
 </p>
 
 ## Why?
