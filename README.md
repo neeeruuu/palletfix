@@ -10,7 +10,7 @@ So that you don't have to manually download your avatars and levels.
 All it does is make it ignore the pallet version, and rename pallet.json to (barcode).pallet.json after it extracts the addon.
 
 ## Installation
-Grab the latest build from [here](https://github.com/neeeruuu/palletfix/tags), and extract it to your game's main folder. (steamapps/common/BONELAB)
+Grab the latest build from [here](https://github.com/neeeruuu/palletfix/releases/latest), and extract it to your game's main folder. (steamapps/common/BONELAB)
 
 ## Disclaimer
 I haven't thoroughly tested it yet. (I only tested it with a few avatars, two weapon packs and a level)\
