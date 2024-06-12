@@ -49,5 +49,4 @@ namespace Log
     DECL_LOGGER(warning, LOG_WARNING);
     DECL_LOGGER(error, LOG_ERROR);
     DECL_LOGGER(verbose, LOG_VERBOSE);
-
 }
