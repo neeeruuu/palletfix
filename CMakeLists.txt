@@ -15,12 +15,12 @@ add_subdirectory(vendor)
 # dll
 # ---------------------
 file(GLOB_RECURSE DLL_SOURCES CONFIGURE_DEPENDS "src/palletfix/*.cpp" "src/palletfix/*.h" "src/palletfix/*.asm")
-add_library(palletfix-dll SHARED ${DLL_SOURCES})
-set_target_properties(palletfix-dll PROPERTIES OUTPUT_NAME "dwmapi")
-target_compile_definitions(palletfix-dll PRIVATE ADDS _AMD64_
+add_library(palletfix SHARED ${DLL_SOURCES})
+set_target_properties(palletfix PROPERTIES OUTPUT_NAME "dwmapi")
+target_compile_definitions(palletfix PRIVATE ADDS _AMD64_
                                                  WIN32_LEAN_AND_MEAN)
-target_link_libraries(palletfix-dll PRIVATE safetyhook Zydis)
-target_include_directories(palletfix-dll PRIVATE "src/palletfix/")
+target_link_libraries(palletfix PRIVATE safetyhook Zydis)
+target_include_directories(palletfix PRIVATE "src/palletfix/")
 
 # ---------------------
 # folder grouping
@@ -40,3 +40,8 @@ endforeach()
 endfunction()
 
 group_files("${DLL_SOURCES}")
+
+# ------------------------------------------------------
+# set output directory
+# ------------------------------------------------------
+set_target_properties(palletfix PROPERTIES RUNTIME_OUTPUT_DIRECTORY  "${CMAKE_CURRENT_BINARY_DIR}/build")
