@@ -37,4 +37,4 @@ jobs:
         tag_name: v${{ steps.tags.outputs.new_version }}
         name: "v${{ steps.tags.outputs.new_version }}"
         fail_on_unmatched_files: true
-        files: proj/build/MinSizeRel/crosscord.exe
+        files: proj/build/MinSizeRel/dwmapi.dll
