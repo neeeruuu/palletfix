@@ -1,0 +1,6 @@
+[submodule "vendor/safetyhook"]
+	path = vendor/safetyhook
+	url = https://github.com/cursey/safetyhook
+[submodule "vendor/zydis"]
+	path = vendor/zydis
+	url = https://github.com/zyantific/zydis
