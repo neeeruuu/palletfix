@@ -59,26 +59,13 @@ bool applyPalletHooks() {
 	if (!loadAddr)
 		return false;
 
-	//ZydisDecoder decoder;
-	//ZydisDecoderInit(&decoder, ZYDIS_MACHINE_MODE_LONG_64, ZYDIS_STACK_WIDTH_64);
-
 	intptr_t midAddr1 = loadAddr + 0x26EB;
 	intptr_t midAddr2 = loadAddr + 0x2E58;
-	//ZydisDecodedInstruction mid1ix;
-	//ZydisDecodedInstruction mid2ix;
 
-	//void* buff1 = malloc(15);
-	//if (!buff1) return false;
-	//memcpy(buff1, reinterpret_cast<void*>(midAddr1), 15);
-	//ZydisDecoderDecodeInstruction(&decoder, nullptr, reinterpret_cast<void*>(buff1), 15, &mid1ix);
 	mid1 = safetyhook::create_mid(midAddr1, midHookOne);
 	if (!mid1.enable())
 		return false;
 
-	//void* buff2 = malloc(15);
-	//if (!buff2) return false;
-	//memcpy(buff2, reinterpret_cast<void*>(midAddr2), 15);
-	//ZydisDecoderDecodeInstruction(&decoder, nullptr, reinterpret_cast<void*>(buff2), 15, &mid2ix);
 	mid2 = safetyhook::create_mid(midAddr2, midHookTwo);
 	if (!mid2.enable())
 		return false;
