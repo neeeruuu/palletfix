@@ -18,7 +18,7 @@
 
 SLZ::ModDownloader* downloader;
 
-void midHookOne(SafetyHookContext& ctx) {
+void palletVersionCheck(SafetyHookContext& ctx) {
 	downloader = reinterpret_cast<SLZ::ModDownloader*>(ctx.rax);
 
 	System_String* palletVersion = downloader->getCurrentPallet()->getVersion();
@@ -28,7 +28,7 @@ void midHookOne(SafetyHookContext& ctx) {
 		downloader->getCurrentPallet()->setVersion(modVersion->copy());
 }
 
-void midHookTwo(SafetyHookContext& ctx) {
+void palletJSONCheck(SafetyHookContext& ctx) {
 	System_String* expectedPathStr = reinterpret_cast<System_String*>(ctx.rax);
 
 	std::filesystem::path expectedPath(expectedPathStr->c_str());
@@ -46,8 +46,8 @@ void midHookTwo(SafetyHookContext& ctx) {
 	std::filesystem::copy(legacyPalletJsonDir, expectedPathStr->c_str(), std::filesystem::copy_options::overwrite_existing);
 }
 
-SafetyHookMid mid1{};
-SafetyHookMid mid2{};
+SafetyHookMid verCheckHook{};
+SafetyHookMid JSONChechHook{};
 
 bool applyPalletHooks() {
 	void* gameAssembly = LoadLibraryA("GameAssembly.dll");
@@ -58,23 +58,21 @@ bool applyPalletHooks() {
 	if (!loadAddr)
 		return false;
 
-	intptr_t midAddr1 = loadAddr + 0x26EB;
-	intptr_t midAddr2 = loadAddr + 0x2E58;
 
-	mid1 = safetyhook::create_mid(midAddr1, midHookOne);
-	if (!mid1.enable())
+	verCheckHook = safetyhook::create_mid(loadAddr + 0x26EB, palletVersionCheck);
+	if (!verCheckHook.enable())
 		return false;
 
-	mid2 = safetyhook::create_mid(midAddr2, midHookTwo);
-	if (!mid2.enable())
+	JSONChechHook = safetyhook::create_mid(loadAddr + 0x2E, palletJSONCheck);
+	if (!JSONChechHook.enable())
 		return false;
 
 	return true;
 }
 
 bool removePalletHooks() {
-	mid1.reset();
-	mid2.reset();
+	verCheckHook.reset();
+	JSONChechHook.reset();
 	return true;
 }
 
