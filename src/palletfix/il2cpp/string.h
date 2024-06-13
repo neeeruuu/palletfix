@@ -8,7 +8,7 @@
 
 struct System_String_fields {
 	__int32 _strlen;
-	wchar_t* _chars;
+	wchar_t _chars[1];
 };
 
 class System_String : Il2CppObject<System_String_fields> {
