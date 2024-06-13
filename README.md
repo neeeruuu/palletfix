@@ -7,7 +7,7 @@
 
 ## What does it do?
 It prevents downloads from failing when attempting to download a mod that was released before patch 4.
-All it does is make it ignore the pallet version, and rename pallet.json to (barcode).pallet.json after it extracts the addon.
+This is done by allowing the old pallet.json files to load, removing the 0.6 sdk version check, and some other misc fixes.
 
 ## Why?
 So that you don't have to manually download your avatars and levels.
