@@ -1,21 +1,18 @@
 #pragma once
 
 #include <vcruntime.h>
-#include <combaseapi.h>
+#include <wchar.h>
 
 #include "interop.h"
+#include "base.h"
 
 struct System_String_fields {
 	__int32 _strlen;
-	wchar_t _chars[];
+	wchar_t* _chars;
 };
 
-class System_String {
+class System_String : Il2CppObject<System_String_fields> {
 private:
-	const intptr_t _klass;
-	const intptr_t _monitor;
-	System_String_fields _fields;
-
 	System_String();
 public:
 	__forceinline int length() const { return _fields._strlen; }
@@ -25,7 +22,7 @@ public:
 	bool operator==(const System_String& str) const {
 		if (str._fields._strlen != _fields._strlen)
 			return false;
-		if (lstrcmpW(str._fields._chars, _fields._chars) == 0)
+		if (wcscmp(str._fields._chars, _fields._chars) == 0)
 			return true;
 		return false;
 	}
