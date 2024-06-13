@@ -1,5 +1,5 @@
 #include "palletfix.h"
-#include "interop.h"
+#include "addresses.h"
 #include "hooks.h"
 
 #include "util/log.h"
@@ -67,7 +67,11 @@ void PalletFix::load(void* dllMod)
 	checkFirstTimeSetup();
 
 	Log::info("obtaining addresses");
-	interop::getAddresses();
+	if (!addresses::get()) {
+		Log::error("failed to get addresses, unloading...");
+		FreeLibrary(reinterpret_cast<HMODULE>(dllMod));
+		return;
+	}
 
 	Log::info("applying hooks");
 	if (!HookManager::get()->applyAll()) {
