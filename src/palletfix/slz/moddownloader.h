@@ -9,6 +9,10 @@ namespace SLZ {
 		System_String* getVersion() {
 			return *reinterpret_cast<System_String**>(reinterpret_cast<__int64>(this) + 0x30);
 		}
+
+		void setVersion(System_String* ver) {
+			*reinterpret_cast<System_String**>(reinterpret_cast<__int64>(this) + 0x30) = ver;
+		}
 	private:
 		ModInfo();
 		~ModInfo() = delete;
