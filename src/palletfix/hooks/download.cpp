@@ -14,7 +14,6 @@
 
 #include <libloaderapi.h>
 
-#include <Zydis/Zydis.h>
 #include <safetyhook.hpp>
 
 SLZ::ModDownloader* downloader;
