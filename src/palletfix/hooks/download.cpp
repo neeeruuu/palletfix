@@ -46,8 +46,13 @@ void palletJSONCheck(SafetyHookContext& ctx) {
 	std::filesystem::copy(legacyPalletJsonDir, expectedPathStr->c_str(), std::filesystem::copy_options::overwrite_existing);
 }
 
+void barcodePathFix(SafetyHookContext& ctx) {
+	ctx.r8 = (ctx.r8 & 0xFFFFFFFF00000000) | (intptr_t)3;
+}
+
 SafetyHookMid verCheckHook{};
 SafetyHookMid JSONChechHook{};
+SafetyHookMid barcodePathFixHook{};
 
 bool applyPalletHooks() {
 	void* gameAssembly = LoadLibraryA("GameAssembly.dll");
@@ -58,6 +63,8 @@ bool applyPalletHooks() {
 	if (!loadAddr)
 		return false;
 
+	intptr_t loadAddr2 = mem::findPattern(gameAssembly, LoadPalletFileAndPathFromZip2_Signature);
+	if (!loadAddr2) return false;
 
 	verCheckHook = safetyhook::create_mid(loadAddr + 0x26EB, palletVersionCheck);
 	if (!verCheckHook.enable())
@@ -65,6 +72,11 @@ bool applyPalletHooks() {
 
 	JSONChechHook = safetyhook::create_mid(loadAddr + 0x2E, palletJSONCheck);
 	if (!JSONChechHook.enable())
+	// 0x52C has:
+	// SLZ::Pallet* pallet = reinterpret_cast<SLZ::Pallet*>(ctx.rax);
+	// System_String* path = reinterpret_cast<System_String*>(ctx.rdi);
+	barcodePathFixHook = safetyhook::create_mid(loadAddr2 + 0x556, barcodePathFix);
+	if (!barcodePathFixHook.enable())
 		return false;
 
 	return true;
@@ -73,6 +85,7 @@ bool applyPalletHooks() {
 bool removePalletHooks() {
 	verCheckHook.reset();
 	JSONChechHook.reset();
+	barcodePathFixHook.reset();
 	return true;
 }
 
