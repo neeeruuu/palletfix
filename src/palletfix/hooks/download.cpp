@@ -51,7 +51,8 @@ void barcodePathFix(SafetyHookContext& ctx) {
 }
 
 SafetyHookMid verCheckHook{};
-SafetyHookMid JSONChechHook{};
+SafetyHookMid JSONCheckHook{};
+
 SafetyHookMid barcodePathFixHook{};
 
 bool applyPalletHooks() {
@@ -59,19 +60,21 @@ bool applyPalletHooks() {
 	if (!gameAssembly)
 		return false;
 
-	intptr_t loadAddr = mem::findPattern(gameAssembly, DownloadMod_Signature);
-	if (!loadAddr)
-		return false;
 
+	intptr_t loadAddr = mem::findPattern(gameAssembly, LoadPalletFileAndPathFromZip_Signature);
+	if (!loadAddr) return false;
+	
 	intptr_t loadAddr2 = mem::findPattern(gameAssembly, LoadPalletFileAndPathFromZip2_Signature);
 	if (!loadAddr2) return false;
 
-	verCheckHook = safetyhook::create_mid(loadAddr + 0x26EB, palletVersionCheck);
+	verCheckHook = safetyhook::create_mid(loadAddr + 0x26E0, palletVersionCheck);
 	if (!verCheckHook.enable())
 		return false;
 
-	JSONChechHook = safetyhook::create_mid(loadAddr + 0x2E, palletJSONCheck);
-	if (!JSONChechHook.enable())
+	JSONCheckHook = safetyhook::create_mid(loadAddr + 0x2E58, palletJSONCheck);
+	if (!JSONCheckHook.enable())
+		return false;
+
 	// 0x52C has:
 	// SLZ::Pallet* pallet = reinterpret_cast<SLZ::Pallet*>(ctx.rax);
 	// System_String* path = reinterpret_cast<System_String*>(ctx.rdi);
@@ -84,7 +87,7 @@ bool applyPalletHooks() {
 
 bool removePalletHooks() {
 	verCheckHook.reset();
-	JSONChechHook.reset();
+	JSONCheckHook.reset();
 	barcodePathFixHook.reset();
 	return true;
 }
