@@ -51,7 +51,10 @@ public:
 		return _internal::String__New(buff);
 	}
 
-	static System_String* create(const wchar_t* buff, int len) {
-		return _internal::String__New_UTF16(buff, len);
+	static System_String* create(const wchar_t* buff) {
+		size_t buffLen = wcslen(buff);
+		System_String* str = _internal::String__New_UTF16(buff, buffLen + 1);
+		str->_fields._chars[buffLen] = '\0';
+		return str;
 	}
 };
