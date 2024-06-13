@@ -21,22 +21,22 @@ SLZ::ModDownloader* downloader;
 void midHookOne(SafetyHookContext& ctx) {
 	downloader = reinterpret_cast<SLZ::ModDownloader*>(ctx.rax);
 
-	IL2CPPString* palletVersion = downloader->getCurrentPallet()->getVersion();
-	IL2CPPString* modVersion = downloader->getCurrentMod()->getVersion();
+	System_String* palletVersion = downloader->getCurrentPallet()->getVersion();
+	System_String* modVersion = downloader->getCurrentMod()->getVersion();
 
 	if (*modVersion != *palletVersion)
 		downloader->getCurrentPallet()->setVersion(modVersion->copy());
 }
 
 void midHookTwo(SafetyHookContext& ctx) {
-	IL2CPPString* expectedPathStr = reinterpret_cast<IL2CPPString*>(ctx.rax);
+	System_String* expectedPathStr = reinterpret_cast<System_String*>(ctx.rax);
 
 	std::filesystem::path expectedPath(expectedPathStr->c_str());
 	if (std::filesystem::exists(expectedPath))
 		return;
 
 	SLZ::Pallet* pallet = downloader->getCurrentPallet();
-	IL2CPPString* runtimeModsPath = SLZ::MarrowSDK::getRuntimeModsPath();
+	System_String* runtimeModsPath = SLZ::MarrowSDK::getRuntimeModsPath();
 
 	std::wstring modPath = std::format(L"{}\\{}", runtimeModsPath->c_str(), pallet->getBarcode()->toString()->c_str());
 	std::wstring legacyPalletJsonDir = std::format(L"{}\\pallet.json", modPath);

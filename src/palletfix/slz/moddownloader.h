@@ -1,13 +1,13 @@
 #pragma once
-class IL2CPPString;
+class System_String;
 
 namespace SLZ {
 	class Pallet;
 
 	class ModInfo {
 	public:
-		IL2CPPString* getVersion() {
-			return *reinterpret_cast<IL2CPPString**>(reinterpret_cast<__int64>(this) + 0x30);
+		System_String* getVersion() {
+			return *reinterpret_cast<System_String**>(reinterpret_cast<__int64>(this) + 0x30);
 		}
 	private:
 		ModInfo();

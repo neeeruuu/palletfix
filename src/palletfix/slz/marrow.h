@@ -2,13 +2,13 @@
 
 #include "interop.h"
 
-class IL2CPPString;
+class System_String;
 
 namespace SLZ {
 	class MarrowSDK {
 	public:
-		static IL2CPPString* getRuntimeModsPath() {
-			static auto fn = reinterpret_cast<IL2CPPString*(*)(void*)>(interop::_addresses::Marrow_GetRuntimeModsPath);
+		static System_String* getRuntimeModsPath() {
+			static auto fn = reinterpret_cast<System_String*(*)(void*)>(interop::_addresses::Marrow_GetRuntimeModsPath);
 			return fn(0);
 		}
 	private:
