@@ -1,15 +1,16 @@
 #pragma once
 
-#include "interop.h"
-
 class System_String;
 
 namespace SLZ {
+	namespace _internal {
+		inline System_String* (*getRuntimeModsPath)(void*);
+	}
+	
 	class MarrowSDK {
 	public:
 		static System_String* getRuntimeModsPath() {
-			static auto fn = reinterpret_cast<System_String*(*)(void*)>(interop::_addresses::Marrow_GetRuntimeModsPath);
-			return fn(0);
+			return _internal::getRuntimeModsPath(0);
 		}
 	private:
 		MarrowSDK();

@@ -1,15 +1,18 @@
 #pragma once
 
-#include "interop.h"
-
 class System_String;
 
 namespace SLZ {
+	class Barcode;
+	
+	namespace _internal {
+		inline System_String* (*Barcode__ToString) (Barcode*, void*);
+	};
+
 	class Barcode {
 	public:
 		System_String* toString() {
-			static auto fn = reinterpret_cast<System_String * (*)(Barcode*, void*)>(interop::_addresses::Barcode_ToString);
-			return fn(this, 0);
+			return _internal::Barcode__ToString(this, 0);
 		}
 
 	private:

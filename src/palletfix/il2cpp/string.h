@@ -3,8 +3,18 @@
 #include <vcruntime.h>
 #include <wchar.h>
 
-#include "interop.h"
 #include "base.h"
+
+/*
+	functions obtained on offsets.h
+*/
+class System_String;
+namespace _internal {
+	inline System_String* (*String__Concat)(System_String*, System_String*, void*);
+	inline System_String* (*String__Copy)(System_String*, void*);
+	inline System_String* (*String__New)(const char* str);
+	inline System_String* (*String__New_UTF16)(const wchar_t* str, int len);
+}
 
 struct System_String_fields {
 	__int32 _strlen;
@@ -27,18 +37,21 @@ public:
 		return false;
 	}
 
+	void write(const wchar_t* buff);
+
 	System_String* concat(System_String* str) {
-		static auto fn = reinterpret_cast<System_String * (*)(System_String*, System_String*, void*)>(interop::_addresses::String_Concat);
-		return fn(this, str, 0);
+		return _internal::String__Concat(this, str, 0);
 	}
 
 	System_String* copy() {
-		static auto fn = reinterpret_cast<System_String * (*)(System_String*, void*)>(interop::_addresses::String_Copy);
-		return fn(this, 0);
+		return _internal::String__Copy(this, 0);
 	}
 
-	static System_String* create(int len) {
-		static auto fn = reinterpret_cast<System_String * (*)(System_String*, void*, int, int, void*, void*)>(interop::_addresses::String_Create);
-		return fn(0, 0, 0, len, 0, 0);
+	static System_String* create(const char* buff) {
+		return _internal::String__New(buff);
+	}
+
+	static System_String* create(const wchar_t* buff, int len) {
+		return _internal::String__New_UTF16(buff, len);
 	}
 };
