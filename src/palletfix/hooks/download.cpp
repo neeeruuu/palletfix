@@ -26,9 +26,10 @@ void palletVersionCheck(SafetyHookContext& ctx) {
 
 
 	if (!modVersion) {
-		System_String* verStr = System_String::create(L"1.0");
-		downloader->getCurrentMod()->setVersion(verStr);
+		modVersion = System_String::create(L"1.0");
+		downloader->getCurrentMod()->setVersion(modVersion);
 	}
+
 	if (*modVersion != *palletVersion)
 		downloader->getCurrentPallet()->setVersion(modVersion->copy());
 }
