@@ -1,5 +1,4 @@
 #include "hooks.h"
-#include "signatures.h"
 
 #include "slz/moddownloader.h"
 #include "slz/barcode.h"
@@ -7,6 +6,7 @@
 #include "slz/pallet.h"
 
 #include "il2cpp/string.h"
+#include "il2cpp.h"
 
 #include "util/memory.h"
 
@@ -66,26 +66,41 @@ bool applyPalletHooks() {
 	if (!gameAssembly)
 		return false;
 
+	Il2CppClass* ModDownloader = il2cpp::classFromName("SLZ.Marrow", "SLZ.Marrow.Forklift", "ModDownloader");
+	if (!ModDownloader)
+		return false;
 
-	intptr_t loadAddr = mem::findPattern(gameAssembly, LoadPalletFileAndPathFromZip_Signature);
-	if (!loadAddr) return false;
-	
-	intptr_t loadAddr2 = mem::findPattern(gameAssembly, LoadPalletFileAndPathFromZip2_Signature);
-	if (!loadAddr2) return false;
+	/*
+		LoadPalletFileAndPathFromZip hook
+	*/
+	MethodInfo* LoadPalletFileAndPathFromZip = il2cpp::methodFromName(ModDownloader, "<DownloadMod>g__LoadPalletFileAndPathFromZip|17_0");
+	if (!LoadPalletFileAndPathFromZip)
+		return false;
 
-	verCheckHook = safetyhook::create_mid(loadAddr + 0x26E0, palletVersionCheck);
+	// in case something else needs to be changed, 0x52C has:
+	// SLZ::Pallet* pallet = reinterpret_cast<SLZ::Pallet*>(ctx.rax);
+	// System_String* path = reinterpret_cast<System_String*>(ctx.rdi);
+	barcodePathFixHook = safetyhook::create_mid(reinterpret_cast<intptr_t>(LoadPalletFileAndPathFromZip->methodPointer) + 0x556, barcodePathFix);
+	if (!barcodePathFixHook.enable())
+		return false;
+
+	/*
+		DownloadMod hook
+	*/
+	Il2CppClass* downloadModStateMachine = il2cpp::nestedTypeFromName(ModDownloader, "<DownloadMod>d__17");
+	if (!downloadModStateMachine)
+		return false;
+
+	MethodInfo* downloadMoveNext = il2cpp::methodFromName(downloadModStateMachine, "MoveNext");
+	if (!downloadMoveNext)
+		return false;
+
+	verCheckHook = safetyhook::create_mid(reinterpret_cast<intptr_t>(downloadMoveNext->methodPointer) + 0x26E0, palletVersionCheck);
 	if (!verCheckHook.enable())
 		return false;
 
-	JSONCheckHook = safetyhook::create_mid(loadAddr + 0x2E58, palletJSONCheck);
+	JSONCheckHook = safetyhook::create_mid(reinterpret_cast<intptr_t>(downloadMoveNext->methodPointer) + 0x2E58, palletJSONCheck);
 	if (!JSONCheckHook.enable())
-		return false;
-
-	// 0x52C has:
-	// SLZ::Pallet* pallet = reinterpret_cast<SLZ::Pallet*>(ctx.rax);
-	// System_String* path = reinterpret_cast<System_String*>(ctx.rdi);
-	barcodePathFixHook = safetyhook::create_mid(loadAddr2 + 0x556, barcodePathFix);
-	if (!barcodePathFixHook.enable())
 		return false;
 
 	return true;

@@ -1,6 +1,7 @@
 #include "palletfix.h"
-#include "addresses.h"
 #include "hooks.h"
+#include "il2cpp.h"
+#include "globals.h"
 
 #include "util/log.h"
 
@@ -66,9 +67,16 @@ void PalletFix::load(void* dllMod)
 
 	checkFirstTimeSetup();
 
-	Log::info("obtaining addresses");
-	if (!addresses::get()) {
-		Log::error("failed to get addresses, unloading...");
+	g_GameAssembly = LoadLibraryA("GameAssembly.dll");
+	if (!g_GameAssembly) {
+		Log::error("failed to get GameAssembly handle, unloading...");
+		FreeLibrary(reinterpret_cast<HMODULE>(dllMod));
+		return;
+	}
+
+	Log::info("getting il2cpp assemblies");
+	if (!il2cpp::loader::populateAssemblies()) {
+		Log::error("failed to get il2cpp assemblies");
 		FreeLibrary(reinterpret_cast<HMODULE>(dllMod));
 		return;
 	}

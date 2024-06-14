@@ -1,10 +1,6 @@
 #include "base.h"
 
-class System_Version;
 class System_String;
-namespace _internal {
-	inline System_Version* (*Version__FromString)(System_String*, void*);
-}
 
 struct System_Version_fields {
 	__int32 _major;
@@ -25,14 +21,8 @@ public:
 	__inline void setBuild(int val) { _fields._build = val; }
 	__inline void setRevision(int val) { _fields._revision = val; }
 
-	void operator=(const System_Version& ver) {
-		_fields._major = ver._fields._major;
-		_fields._minor = ver._fields._minor;
-		_fields._build = ver._fields._build;
-		_fields._revision = ver._fields._revision;
-	}
+	void operator=(const System_Version& ver);
 
-	static System_Version* fromString(System_String* str) {
-		return _internal::Version__FromString(str, 0);
-	}
+	static System_Version* create();
+	static System_Version* create(System_String* str);
 };

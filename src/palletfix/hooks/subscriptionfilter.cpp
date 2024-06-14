@@ -1,9 +1,9 @@
 #include "hooks.h"
-#include "signatures.h"
 
 #include "util/log.h"
 #include "util/memory.h"
 
+#include "il2cpp.h"
 #include "il2cpp/version.h"
 #include "il2cpp/string.h"
 
@@ -26,11 +26,15 @@ void noVersionFix(SafetyHookContext& ctx) {
 }
 
 bool applyFilterHooks() {
-	intptr_t filterSubscriptionsAddr = mem::findPattern(GetModuleHandleA("GameAssembly.dll"), FilterSubscriptions_Signature);
-	if (!filterSubscriptionsAddr)
+	Il2CppClass* ModSubscriptionDownloader = il2cpp::classFromName("Assembly-CSharp", "", "ModSubscriptionDownloader");
+	if (!ModSubscriptionDownloader)
 		return false;
 
-	verFixHook = safetyhook::create_mid(filterSubscriptionsAddr + 0x82A, noVersionFix);
+	MethodInfo* FilterSubscriptions = il2cpp::methodFromName(ModSubscriptionDownloader, "FilterSubscriptions");
+	if (!FilterSubscriptions)
+		return false;
+
+	verFixHook = safetyhook::create_mid(reinterpret_cast<intptr_t>(FilterSubscriptions->methodPointer) + 0x82A, noVersionFix);
 	if (!verFixHook.enable())
 		return false;
 
