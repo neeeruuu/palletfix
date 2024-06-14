@@ -16,14 +16,13 @@ SafetyHookMid verFixHook{};
 
 void noVersionFix(SafetyHookContext& ctx) {
 	System_Version* modVersion = reinterpret_cast<System_Version*>(ctx.rdi);
-	if (modVersion) {
-		modVersion->setMinor(6);
-		modVersion->setMajor(0);
-	}
-	else {
-		System_String* str = System_String::create(L"0.6");
-		ctx.rdi = reinterpret_cast<uintptr_t>(System_Version::fromString(str));
-	}
+	if (!modVersion)
+		modVersion = System_Version::create();
+
+	modVersion->setMinor(6);
+	modVersion->setMajor(0);
+
+	ctx.rdi = reinterpret_cast<uintptr_t>(modVersion);
 }
 
 bool applyFilterHooks() {
